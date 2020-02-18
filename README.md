@@ -2,8 +2,9 @@
 
 This package provides syntax highlighting for Racket.
 
-However, the project is incomplete and unstable. You can fix this by
-[supporting this project's development][subscribe].
+However, the project is incomplete and unstable. If you think this is
+a valuable contribution, then you can help [support this project's
+development][subscribe].
 
 ## Motivation and Preliminary Thinking
 Racket is a pioneer for language-oriented programming with a curious
