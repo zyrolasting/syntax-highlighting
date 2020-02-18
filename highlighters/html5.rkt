@@ -7,8 +7,7 @@
 ; Convention: '+$' means "Make constant parser".  I need this because
 ; parsack populates the current namespace with Racket identifiers.
 (require [rename-in parsack [string +$string]]
-         racket/function
-         "../common.rkt")
+         racket/function)
 
 (define $bom (char #\uFEFF))
 
