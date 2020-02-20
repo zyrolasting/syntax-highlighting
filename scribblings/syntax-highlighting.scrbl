@@ -7,63 +7,35 @@
 @author{Sage Gerard}
 
 This collection is for general-purpose syntax highlighting in Racket.
-This project is young and incomplete. If you wish to fast track development,
-please see here.
+This project is incomplete. If you wish to fast track development,
+please consider @hyperlink["https://sagegerard.com/subscribe.html"]{supporting it}.
 
-@defmodule[syntax-highlighting]
+@section{An Insecure Stopgap}
 
-@section{A Baby Step}
-To highlight a code fragment, just provide a string to a procedure of
-name @tt{highlight-X}, where @tt{X} is one of the built-in languages.
+@defmodule[syntax-highlighting/lusever]
 
-@racketmod[#:file "colorful-hello.rkt"
-racket/base
+Syntax highlighting is a hard problem. Right now, there's no pure-Racket
+solution for it. You can either install a seperate app, or use this quick
+and very... very dirty module. This module will be taken down the moment
+a better solution appears.
 
-(require syntax-highlighting)
+@defproc[(highlight-code/insecure [language symbol?]
+                                  [theme symbol?]
+                                  [code string?])
+                                  xexpr?]{
+This module highlights your code using
+@hyperlink["http://markup.su/highlighter/api"]{http://markup.su/highlighter/api},
+by @hyperlink["http://lusever.ru/"]{lusever}. Go to the former link to see accepted
+values for @racket[language] and @racket[theme].
 
-(displayln
-  (highlighted->string/ansi-colored
-    (highlight-html5 "<h1>Hello, world!</h1>")))]
+If you see a value with spaces
+and special characters like @litchar{R Console (R.app)}, pass it to this procedure
+as @racket['|R Console (R.app)|].
 
-If you run this program using your terminal, you will see colorized
-output thanks to @racket[highlighted->string/ansi-colored].
+@bold{BEWARE: Do NOT provide code or anything you do not want shared to this procedure!}
 
-Notice that we don't need to specify an entire HTML document. The
-highlighters are expected to deal with incomplete markup or programs
-to maximize usability.
-
-@subsection{Change Colors}
-Use @racket[#:palette] with a highlighter procedure to select an
-available palette.
-
-@racketmod[#:file "colorful-hello.rkt"
-racket/base
-
-(require syntax-highlighting)
-
-(displayln
-  (highlighted->ansi-colored
-    (highlight-html #:palette sunshine
-                    "<h1>Hello, world!</h1")))]
-
-You can change colors for call to a highlighter. That allows you to
-use a different palette within the same language for emphasis, or use
-a new palette with a different language embedded within another.
-
-Highlighter procedures also accept input ports.
-
-@racketblock[
-(require syntax-highlighting)
-(define highlighted (call-with-input-file "doc.html" highlight-html))]
-
-@section{Writing Your Own Highlighter}
-
-A highlighter is a @racketmodname[parsack] parser that classifies
-characters.
-
-@section{Contributing}
-
-I can't write precise highlighters for every language because that's
-too much for one person to do.  If you want to help this project gain
-coverage over more languages, then submit a pull request with your
-highlighter implementation to the project.
+@itemlist[
+@item{This only works online. If it fails to highlight your code, it will return said code without highlighting.}
+@item{The service only uses HTTP. Whatever you send is clear text.}
+]
+}
