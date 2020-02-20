@@ -23,5 +23,11 @@ The plan is to extend `parsack` such that it buckets characters using
 Pygments' token classes. Presentation/post-processing of code can then
 be reasoned about in relatively familiar terms for the Racket community.
 
+Problem is, that will take a long time. A good stopgap is a Docker
+image with an existing syntax highlighter, along with a Racket API to
+access a respective container as a service. One possible complication
+is whether Docker should be automatically installed on your system, if
+on a VM or bare-metal.
+
 [Pygments]: https://pygments.org/
 [subscribe]: https://sagegerard.com/subscribe.html
