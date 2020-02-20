@@ -15,10 +15,11 @@ please consider @hyperlink["https://sagegerard.com/subscribe.html"]{supporting i
 
 @defmodule[syntax-highlighting/lusever]
 
-Syntax highlighting is a hard problem. Right now, there's no pure-Racket
-solution for it. You can either install a seperate app, or use this quick
-and very... very dirty module. This module will be taken down the moment
-a better solution appears.
+Syntax highlighting is a hard problem. Right now, there's no
+pure-Racket solution for it. You can either install a seperate app, or
+use this quick and very... very dirty module. I do not endorse this
+module for widespread use. I only provide it for those who understand
+and accept the risks discussed below.
 
 @defproc[(highlight-code/insecure [language symbol?]
                                   [theme symbol?]
