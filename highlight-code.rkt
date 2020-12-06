@@ -6,36 +6,31 @@
          racket/port
          racket/runtime-path
          racket/system
-         threading
-         xml
-         (only-in html read-html-as-xml))
+         xml)
 
-(define-runtime-path pipe.py "pygments-integration.py")
+(define-runtime-path pygmentize "./py/bin/pygmentize")
 
-(define (read-html-as-xexprs port)
-  (~>> (read-html-as-xml port)
-       (element #f #f 'root '())
-       xml->xexpr
-       decode-ampersands-in-attributes
-       cddr))
-
-(define (decode-ampersands-in-attributes x)
-  (match x
-    [`(,tag ([,ks ,vs] ...) . ,els)
-     `(,tag
-       ,(for/list ([k ks]
-                   [v vs])
-          (list k (regexp-replace* "&amp;" v "\\&")))
-       ,@(map decode-ampersands-in-attributes els))]
-    [v v]))
+(module+ main (apply system* pygmentize (vector->list (current-command-line-arguments))))
 
 (define (highlight-code lang code)
-  (match-define (list from-proc to-proc pid from-proc/err proc)
-    (process* (find-executable-path "python3")
-              pipe.py))
-  (displayln lang to-proc)
-  (copy-port (open-input-string code)
-             to-proc)
-  (close-output-port to-proc)
-  (proc 'wait)
-  (read-html-as-xexprs from-proc))
+  (cond [(bytes? code)
+         (highlight-code lang (open-input-bytes code))]
+        [(string? code)
+         (highlight-code lang (open-input-string code))]
+        [(input-port? code)
+         (let-values ([(subproc from-stdout to-stdin from-stderr)
+                       (subprocess #f #f #f 'new pygmentize "-l" lang "-f" "html")])
+           (dynamic-wind void
+                         (λ ()
+                           (copy-port code to-stdin)
+                           (flush-output to-stdin)
+                           (close-output-port to-stdin)
+                           (subprocess-wait subproc)
+                           (define exit-code (subprocess-status subproc))
+                           (if (eq? exit-code 0)
+                               (xml->xexpr (document-element (read-xml/document from-stdout)))
+                               (copy-port from-stderr (current-error-port))))
+                         (λ ()
+                           (close-input-port from-stdout)
+                           (close-input-port from-stderr)
+                           (close-output-port to-stdin))))]))
